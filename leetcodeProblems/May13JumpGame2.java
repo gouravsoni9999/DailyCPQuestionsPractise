@@ -1,4 +1,25 @@
 class Solution {
+    public int jump(int[] nums) {
+        // TC : O(n)
+        // SC : O(1)
+        int n = nums.length;
+        int jumps = 0;
+        int l = 0;
+        int r = 0;
+        while(r < n-1){
+            int farthest = 0;
+            for(int j = l;j <= r;j++){
+                farthest = Math.max(j+nums[j], farthest);
+            }
+            l = r+1;
+            r = farthest;
+            jumps++;
+        }
+        return jumps;
+    }
+}
+
+class Solution {
     int n;
     private int solve(int i,int[] nums){
         if(i >= n) return Integer.MAX_VALUE;
