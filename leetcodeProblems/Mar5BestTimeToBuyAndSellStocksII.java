@@ -62,6 +62,8 @@ class Solution {
 class Solution {
     public int maxProfit(int[] prices) {
         // tabulation(copy of recursion)->space-optimization
+	// TC : O(2*n)
+	// SC : O(1)
         int n = prices.length;
         int[] ahead = new int[2];
         int[] curr  = new int[2];
@@ -88,5 +90,43 @@ class Solution {
             ahead = curr;
         }
         return ahead[1];
+    }
+}
+
+class Solution {
+    int n;
+    int[][] dp;
+
+    private int solve(int[] prices, int i, int buy) {
+        if (i == n)
+            return 0;
+        if (dp[i][buy] != -1)
+            return dp[i][buy];
+        int todayPrice = prices[i];
+        int willBuy = 0, willNotBuy = 0, willSell = 0, willNotSell = 0;
+        if (buy == 1) {
+            // on this day I can buy or not buy
+            willBuy = -todayPrice + solve(prices, i + 1, 0);//next day i can sell only
+            willNotBuy = 0 + solve(prices, i + 1, 1);// next day I can buy only
+        } else {
+            // I cannot buy today, ie., I can sell today
+            willSell = todayPrice + solve(prices, i + 1, 1);//next day I can buy only
+            willNotSell = 0 + solve(prices, i + 1, 0);//next day I can sell only
+        }
+        return dp[i][buy] = Math.max(Math.max(willBuy, willNotBuy), Math.max(willSell, willNotSell));
+    }
+
+    public int maxProfit(int[] prices) {
+        // using recursion + memoization
+        // TC : O(2*n)
+        // SC : O(n)
+        n = prices.length;
+        dp = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < 2; j++) {
+                dp[i][j] = -1;
+            }
+        }
+        return solve(prices, 0, 1);
     }
 }
