@@ -40,26 +40,24 @@ class Solution {
     public int trap(int[] height) {
         // TC : O(n)
         // SC : O(1)
+        // 2-pointer approach
         int n = height.length;
-        int leftMax = 0, rightMax = 0, waterLogged = 0;
         int l = 0, r = n-1;
+        int ans = 0;
+        int lmax = 0, rmax = 0; // lmax and rmax found so far
         while(l < r){
-            if(height[l] <= height[r]){
-                if(leftMax > height[l]){
-                    waterLogged += leftMax - height[l];
-                }else{
-                    leftMax = height[l];
-                }
+            lmax = Math.max(lmax, height[l]); // this is boundary on left
+            rmax = Math.max(rmax, height[r]); // this is boundary on right
+            if(lmax <= rmax){
+                // lmax is the deciding boundary that decides how much water will be trapped
+                ans += lmax - height[l]; // for that lth idx height of water trapped is boundary - its height
                 l++;
             }else{
-                if(rightMax > height[r]){
-                    waterLogged += rightMax - height[r];
-                }else{
-                    rightMax = height[r];
-                }
+                // rmax is the deciding boundary that decides how much  water will be trapped
+                ans += rmax - height[r];
                 r--;
             }
         }
-        return waterLogged;
+        return ans;
     }
 }
