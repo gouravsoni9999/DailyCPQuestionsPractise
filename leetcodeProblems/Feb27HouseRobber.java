@@ -37,3 +37,24 @@ class Solution {
         return Math.max(dp[n-1], dp[n-2]);
     }
 }
+
+class Solution {
+    public int rob(int[] nums) {
+        // using tabulation + space optimization
+        // TC : O(n)
+        // SC : O(1)
+        int n = nums.length;
+        int[] dp = new int[2];
+        // dp[i] = max. stealing from i+1 th house to n th house
+        dp[0] = 0; // no n+1 th house exist
+        dp[1] = 0; // no n+2 th house exist
+        for(int i = n-1;i >= 0;i--){
+            int steal = nums[i] + dp[1];
+            int skip = 0 + dp[0];
+            int curr = Math.max(steal, skip);
+            dp[1] = dp[0];
+            dp[0] = curr;
+        }
+        return dp[0];
+    }
+}
