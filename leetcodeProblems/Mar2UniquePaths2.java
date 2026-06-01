@@ -1,6 +1,37 @@
 class Solution {
     int m;
     int n;
+
+    private int solve(int i, int j, int[][] obstacleGrid) {
+        if (i >= m || j >= n)
+            return 0; // no paths
+        if (obstacleGrid[i][j] == 1)
+            return 0; // no paths to last cell from this cell
+        if (i == m - 1 && j == n - 1)
+            return 1; // as we have reached here
+        int pathsFromDown = solve(i + 1, j, obstacleGrid);
+        int pathsFromRight = solve(i, j + 1, obstacleGrid);
+        int totalPaths = pathsFromDown + pathsFromRight;
+        return totalPaths;
+    }
+
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+	// using simple recursion
+        // TC : O(2^(m+n)) 
+        // SC : O(m+n)
+        m = obstacleGrid.length;
+        n = obstacleGrid[0].length;
+        // base case:
+        // if obstacle is present at (m-1, n-1), answer is always 0
+        if(obstacleGrid[m-1][n-1] == 1) 
+            return 0;
+        return solve(0, 0, obstacleGrid);
+    }
+}
+
+class Solution {
+    int m;
+    int n;
     int[][] dp;
     private int solve(int[][] obstacleGrid, int i,int j){
         if (i >= m || j >= n) return 0;//no path to reach (m-1,n-1)
@@ -13,6 +44,8 @@ class Solution {
     }
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         // using recursion + memoization
+	// TC : O(m*n)
+	// SC : O(m*n) + O(m+n)
         m = obstacleGrid.length;
         n = obstacleGrid[0].length;
         dp = new int[m][n];
@@ -20,47 +53,62 @@ class Solution {
         return solve(obstacleGrid, 0, 0);
     }
 }
+
 class Solution {
-    public int uniquePathsWithObstacles(int[][] obstacleGrid) {//O(m*n)
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
         // using tabulation
+        // TC : O(m*n)
+        // SC : O(m*n)
         int m = obstacleGrid.length;
         int n = obstacleGrid[0].length;
+        // base case: if target cell is blocked
+        if (obstacleGrid[m - 1][n - 1] == 1)
+            return 0; // no paths
         int[][] dp = new int[m][n];
-        // dp[i][j] -> unique paths present from (i,j) to (m-1,n-1)
-        // last row and last column only has one unique path
-        dp[m - 1][n - 1] = obstacleGrid[m - 1][n - 1] == 1 ? 0 : 1;
-        for (int row = m - 2; row >= 0; row--) {
-            if (obstacleGrid[row+1][n-1] == 1){
-                //obstacle present in next
-                dp[row][n-1] = 0;
-                obstacleGrid[row][n-1] = 1;//no way to reach
-            }
-            else if (obstacleGrid[row][n-1] == 1)//current cell has obstacle
-                dp[row][n-1] = 0;
-            else//no obstacle
-                dp[row][n-1] = 1;
-        }
-        for (int col = n - 2; col >= 0; col--) {
-            if (obstacleGrid[m-1][col+1] == 1){
-                //obstacle present in next
-                dp[m-1][col] = 0;
-                obstacleGrid[m-1][col] = 1;//no way to reach
-            }
-            else if (obstacleGrid[m-1][col] == 1)//obstacle present in current cell
-                dp[m-1][col] = 0;
-            else//no obstacle
-                dp[m-1][col] = 1;
-        }
-        // remaining values filled in reverse such that 
-        // dp[i][j] = dp[i+1][j] + dp[i][j+1]
-        for (int row = m - 2; row >= 0; row--) {
-            for (int col = n - 2; col >= 0; col--) {
-                if (obstacleGrid[row][col] == 1)//obstacle present
-                    dp[row][col] = 0;//can't reach from there
-                else//no obstacle present on current cell
-                    dp[row][col] = dp[row + 1][col] + dp[row][col + 1];
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                if (obstacleGrid[i][j] == 1)
+                    dp[i][j] = 0; // no paths
+                else if (i == m - 1 && j == n - 1)
+                    dp[i][j] = 1;
+                else {
+                    int downPaths = (i + 1 >= m) ? 0 : dp[i + 1][j];
+                    int rightPaths = (j + 1 >= n) ? 0 : dp[i][j + 1];
+                    dp[i][j] = downPaths + rightPaths;
+                }
             }
         }
         return dp[0][0];
+    }
+}
+
+class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        // using tabulation + space-optimization
+        // TC : O(m*n)
+        // SC : O(n)
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        // base case: if target cell is blocked
+        if (obstacleGrid[m - 1][n - 1] == 1)
+            return 0; // no paths
+        int[] next = new int[n];
+        // next is filled acc. to mth row and nth col that is all values 0
+        for (int i = m - 1; i >= 0; i--) {
+            int[] curr = new int[n];
+            for (int j = n - 1; j >= 0; j--) {
+                if (obstacleGrid[i][j] == 1)
+                    curr[j] = 0; // no paths
+                else if (i == m - 1 && j == n - 1)
+                    curr[j] = 1;
+                else {
+                    int downPaths = (i + 1 >= m) ? 0 : next[j];
+                    int rightPaths = (j + 1 >= n) ? 0 : curr[j + 1];
+                    curr[j] = downPaths + rightPaths;
+                }
+            }
+            next = curr.clone();
+        }
+        return next[0];
     }
 }
