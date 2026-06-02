@@ -1,57 +1,104 @@
 class Solution {
     int m;
     int n;
-    int[][] dp;
-    private int solve(int[][] grid, int i, int j) {//O(m*n)
-        //base case: can't reach to destination
-        if (i >= m || j >= n)
-            return Integer.MAX_VALUE;
-        if (i == m-1 && j == n-1) return grid[i][j];// reached successfully!
-        if (dp[i][j] != -1) return dp[i][j];
-        int downVal = solve(grid, i + 1, j);
-        int rightVal = solve(grid, i, j + 1);
-        int minVal = Math.min(downVal, rightVal);
-        if (minVal != Integer.MAX_VALUE)
-            minVal += grid[i][j];
-        return dp[i][j] = minVal;
+    private int solve(int i,int j,int[][] grid){
+        if(i >= m || j >= n)
+            return Integer.MAX_VALUE;//no valid sum
+        if(i == m-1 && j == n-1)
+            return grid[i][j]; // answer
+        int rightSum = solve(i, j+1, grid);
+        int downSum = solve(i+1, j, grid);
+        return grid[i][j] + Math.min(rightSum, downSum);
     }
-
     public int minPathSum(int[][] grid) {
-        // recursion + memoization
+        // using simple recursion
+        // TC : O(2^(m+n))
+        // SC : O(m+n)
         m = grid.length;
         n = grid[0].length;
-        dp = new int[m][n];
-        for(int[] row: dp) Arrays.fill(row, -1);
-        return solve(grid, 0, 0);
+        return solve(0, 0, grid);
     }
 }
-class Solution {
-    int m;
-    int n;
-    int[][] dp;
 
-    public int minPathSum(int[][] grid) {//O(m*n)
-        // tabulation
-        m = grid.length;
-        n = grid[0].length;
-        dp = new int[m][n];
-        // dp[i][j] represents min path sum from (i,j) to (m-1,n-1)
-        // last row and last col should be just additions in backwards
-        // as last row and last col has only way to either move downwards straight or rightwards straight
-        dp[m-1][n-1] = grid[m-1][n-1];
-        for(int row = m-2;row>=0;row--){
-            dp[row][n-1] = dp[row+1][n-1] + grid[row][n-1];
+class Solution {
+        int m;
+        int n;
+        int[][] dp;
+        private int solve(int i,int j,int[][] grid){
+	    // base case: can't reach destination
+            if(i >= m || j >= n)
+                return Integer.MAX_VALUE;//no valid sum
+            if(i == m-1 && j == n-1)
+                return grid[i][j]; // answer
+            if(dp[i][j] != -1) return dp[i][j];
+            int rightSum = solve(i, j+1, grid);
+            int downSum = solve(i+1, j, grid);
+            return dp[i][j] = grid[i][j] + Math.min(rightSum, downSum);
         }
-        for(int col = n-2;col>=0;col--){
-            dp[m-1][col] = dp[m-1][col+1] + grid[m-1][col];
+        public int minPathSum(int[][] grid) {
+            // using recursion + memoization
+            // TC : O(m*n)
+            // SC : O(m+n) + O(m*n)
+            m = grid.length;
+            n = grid[0].length;
+            dp = new int[m][n];
+            for(int[] arr: dp){
+                Arrays.fill(arr, -1);
+            }
+            return solve(0, 0, grid);
         }
-        // now for remaining fill from backwards such that 
-        // dp[i][j] = grid[i][j] + min(dp[i+1][j],dp[i][j+1])
-        for(int row = m-2;row>=0;row--){
-            for(int col = n-2;col>=0;col--){
-                dp[row][col] = grid[row][col] + Math.min(dp[row+1][col],dp[row][col+1]);
+}
+
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        /*
+            using tabulation
+            TC : O(m*n)
+            SC : O(m*n)
+        */
+        int[][] dp = new int[m][n];
+        for(int i = m-1;i >= 0;i--){
+            for(int j = n-1;j >= 0;j--){
+                if(i == m-1 && j == n-1){
+                    dp[m-1][n-1] = grid[m-1][n-1]; // base case
+                    continue;
+                }
+                int rightSum = (j+1 >= n) ? Integer.MAX_VALUE : dp[i][j+1];
+                int leftSum = (i+1 >= m) ? Integer.MAX_VALUE : dp[i+1][j];
+                int minSum = Math.min(rightSum, leftSum);
+                int minSumForThisPath = grid[i][j] + minSum;
+                dp[i][j] = minSumForThisPath;
             }
         }
         return dp[0][0];
+    }
+}
+
+class Solution {
+    public int minPathSum(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        /*
+            using tabulation + space-optimization
+            TC : O(m*n)
+            SC : O(n)
+        */
+        int[] dp = new int[n];
+        for(int i = m-1;i >= 0;i--){
+            for(int j = n-1;j >= 0;j--){
+                if(i == m-1 && j == n-1){
+                    dp[j] = grid[m-1][n-1]; // base case
+                    continue;
+                }
+                int rightSum = (j+1 >= n) ? Integer.MAX_VALUE : dp[j+1];
+                int leftSum = (i+1 >= m) ? Integer.MAX_VALUE : dp[j];
+                int minSum = Math.min(rightSum, leftSum);
+                int minSumForThisPath = grid[i][j] + minSum;
+                dp[j] = minSumForThisPath;
+            }
+        }
+        return dp[0];
     }
 }
