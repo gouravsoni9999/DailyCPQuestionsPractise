@@ -66,8 +66,8 @@ class Solution {
                     continue;
                 }
                 int rightSum = (j+1 >= n) ? Integer.MAX_VALUE : dp[i][j+1];
-                int leftSum = (i+1 >= m) ? Integer.MAX_VALUE : dp[i+1][j];
-                int minSum = Math.min(rightSum, leftSum);
+                int downSum = (i+1 >= m) ? Integer.MAX_VALUE : dp[i+1][j];
+                int minSum = Math.min(rightSum, downSum);
                 int minSumForThisPath = grid[i][j] + minSum;
                 dp[i][j] = minSumForThisPath;
             }
@@ -85,20 +85,22 @@ class Solution {
             TC : O(m*n)
             SC : O(n)
         */
-        int[] dp = new int[n];
+        int[] next = new int[n];
         for(int i = m-1;i >= 0;i--){
+            int[] curr = new int[n];
             for(int j = n-1;j >= 0;j--){
                 if(i == m-1 && j == n-1){
-                    dp[j] = grid[m-1][n-1]; // base case
+                    curr[j] = grid[m-1][n-1]; // base case
                     continue;
                 }
-                int rightSum = (j+1 >= n) ? Integer.MAX_VALUE : dp[j+1];
-                int leftSum = (i+1 >= m) ? Integer.MAX_VALUE : dp[j];
-                int minSum = Math.min(rightSum, leftSum);
+                int rightSum = (j+1 >= n) ? Integer.MAX_VALUE : curr[j+1];
+                int downSum = (i+1 >= m) ? Integer.MAX_VALUE : next[j];
+                int minSum = Math.min(rightSum, downSum);
                 int minSumForThisPath = grid[i][j] + minSum;
-                dp[j] = minSumForThisPath;
+                curr[j] = minSumForThisPath;
             }
+            next = curr.clone();
         }
-        return dp[0];
+        return next[0];
     }
 }
