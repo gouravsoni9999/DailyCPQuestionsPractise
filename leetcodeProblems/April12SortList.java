@@ -49,7 +49,7 @@ class Solution {
     }
     public ListNode sortList(ListNode head) {
         // TC : O(nlogn)
-        // SC : O(1)
+        // SC : O(1) + O(log(n))(recursion stack-space)
         if(head == null || head.next == null) return head;
         // using Merge Sort : D&C algo
         ListNode middleNode = findMid(head);//O(n)

@@ -1,48 +1,64 @@
 class Solution {
-    int m;// no. of rows
-    int[][] dp;
-    private int solve(List<List<Integer>> triangle, int i,int j){
-        if (i == m-1) return triangle.get(i).get(j);//base case: on last row
-        // each row i has i+1 columns(elements)
-        if (dp[i][j] != Integer.MAX_VALUE) return dp[i][j];
-        int leftSum = solve(triangle, i+1, j);
-        int rightSum = solve(triangle, i+1, j+1);
-        return dp[i][j] = triangle.get(i).get(j) + Math.min(leftSum, rightSum);
+    int n;
+    private int solve(int i,int j,List<List<Integer>> triangle){
+        if(i >= n || j > i){
+            return 0; // out of bounds
+        }
+        if(i == n-1){
+            return triangle.get(i).get(j); // reached destination!
+        }
+        return triangle.get(i).get(j) + Math.min(solve(i+1,j,triangle),solve(i+1,j+1, triangle));
     }
     public int minimumTotal(List<List<Integer>> triangle) {
-        m = triangle.size();
-        dp = new int[m+1][m+1];
-        for(int[] row: dp) Arrays.fill(row, Integer.MAX_VALUE);
-        // recursion + memoization
-        return solve(triangle, 0, 0);
+        // TC : O(2^n)
+        // SC : O(n)
+	// using simple recursion
+        n = triangle.size();
+        return solve(0, 0, triangle);
     }
 }
+
 class Solution {
-    int m;
-    int[][] dp;
+    int n;
+    Integer[][] dp;
+    private int solve(int i,int j,List<List<Integer>> triangle){
+        if(i == n-1)
+            return triangle.get(i).get(j); // reached destination!
+        if(dp[i][j] != null)
+            return dp[i][j];
+        return dp[i][j] = triangle.get(i).get(j) + Math.min(solve(i+1,j,triangle),solve(i+1,j+1, triangle));
+    }
     public int minimumTotal(List<List<Integer>> triangle) {
-        // bottom-up
-        m = triangle.size();//total no. of rows
-        dp = new int[m][];
-        for(int i = 0;i < m;i++){
-            dp[i] = new int[i+1];
-        }
-        for(int i = 0;i < m;i++){
-            for (int j = 0;j <= i;j++){
-                dp[i][j] = triangle.get(i).get(j);
-            }
-        }
-        // last row (m-1) would be as it is
-        // iterate from m-2 to 0
-        // dp[i][j] = min. path sum from (i,j) till bottom
-        for(int i = m-2;i>=0;i--){
-            for(int j = 0;j<=i;j++){
-                dp[i][j] += Math.min(dp[i+1][j], dp[i+1][j+1]);
-            }
-        }
-        return dp[0][0];// min cost from top to bottom
+        // TC : O(n^2)
+        // SC : O(n^2)
+	// using recursion + memoization
+        n = triangle.size();
+        dp = new Integer[n][n];
+        return solve(0, 0, triangle);
     }
 }
+
+
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+	// using tabulation
+	// TC : O(n^2)
+	// SC : O(n^2)
+        int n = triangle.size();
+        int[][] dp = new int[n][n];
+        for(int i = n-1;i >= 0;i--){
+            for(int j = i;j >= 0;j--){
+                if(i == n-1){
+                    dp[i][j] = triangle.get(i).get(j);
+                }else{
+                    dp[i][j] = triangle.get(i).get(j) + Math.min(dp[i+1][j],dp[i+1][j+1]);
+                }
+            }
+        }
+        return dp[0][0];
+    }
+}
+
 class Solution {
     int n;//no. of rows
     int[] dp;
