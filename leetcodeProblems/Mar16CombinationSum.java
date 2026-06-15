@@ -30,3 +30,34 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    List<List<Integer>> resList = new ArrayList<>();
+    int n;
+    private void solve(int i,int[] candidates,int target,List<Integer> list){
+        if(target < 0 || i == n){
+            return;
+        }
+        if(target == 0){
+            resList.add(new ArrayList<>(list));
+            return;
+        }
+        solve(i+1, candidates, target, new ArrayList<>(list)); // not take
+        list.add(candidates[i]);
+        solve(i, candidates, target - candidates[i], new ArrayList<>(list)); // take
+    }
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        /*
+            using recursion + backtracking
+            TC : O(2^t . k)
+            SC : O(t . k)
+            where t is max. no. of recursive calls needed to reach target
+            and k is the avg. length of a combination
+        */
+        n = candidates.length;
+        solve(0, candidates, target, new ArrayList<>());
+        return resList;
+    }
+}
+
+
