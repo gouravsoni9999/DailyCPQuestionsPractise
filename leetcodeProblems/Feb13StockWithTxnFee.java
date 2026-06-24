@@ -1,53 +1,102 @@
 class Solution {
     int n;
-    int[][] dp;
-    private int solve(int[] prices, int fee, int day, int buy) {
-        if (day >= n)
+    Integer[][] dp;
+    private int solve(int i,int buy,int[] prices, int fee){
+        
+        if(i == n){
             return 0;
-        if (dp[day][buy] != -1) return dp[day][buy];
-        int profit = 0;
-        if (buy == 1) {
-            // I only can buy (not sell)
-            // buy on day
-            int buyProfit = -prices[day] + solve(prices, fee, day + 1, 0);//as I can sell only next day
-            // not buy on that day
-            int notBuyProfit = solve(prices, fee, day + 1, 1);//you need to buy next day
-            profit = Math.max(profit, Math.max(buyProfit, notBuyProfit));
-        } else {
-            // I can sell only
-            // if sold today
-            int sellProfit = prices[day] + solve(prices, fee, day + 1, 1) - fee;// next day buy
-            int notSellProfit = solve(prices, fee, day + 1, 0);//only sell next day
-            profit = Math.max(profit, Math.max(sellProfit, notSellProfit));
         }
-        return dp[day][buy] = profit;
-    }
 
+        if(dp[i][buy] != null){
+            return dp[i][buy];
+        }  
+
+        int ans = 0;
+        
+        if(buy == 1){
+            ans = Math.max(-prices[i] + solve(i+1, 0, prices, fee), 0 + solve(i+1, 1, prices, fee));
+        }else{
+            int willSell = prices[i] - fee + solve(i+1, 1, prices, fee);
+            int willNotSell = 0 + solve(i+1, 0, prices, fee);
+            ans = Math.max(willSell, willNotSell);
+        }
+        return dp[i][buy] = ans;
+    }
     public int maxProfit(int[] prices, int fee) {
-        // using recursion + memoization
+        /*
+            using recursion + memoization
+            TC : O(2*n)
+            SC : O(2*n) + O(n)
+        */
         n = prices.length;
-        int buy = 1;//like a boolean (for recur+memo)
-        dp = new int[n][2];
-        for(int[] row: dp) Arrays.fill(row, -1);
-        return solve(prices, fee, 0, buy);
+        dp = new Integer[n][2];
+        return solve(0, 1, prices, fee);
     }
 }
+
+
 class Solution {
     public int maxProfit(int[] prices, int fee) {
-        // tabulation 
+        /*
+            using tabulation
+            TC : O(2*n)
+            SC : O(2*n)
+        */
+
         int n = prices.length;
-        int[][] dp = new int[n][2];
-        // dp[day][0/1] = at that day I either buy or sell stock to get maxProfit
-       
-        
-        dp[0][0] = 0;
-        dp[0][1] = -prices[0];
-        for(int i = 1;i < n;i++){
-            // dp[day][0] = I not buy or sell the existing stock
-            dp[i][0] = Math.max(dp[i-1][0], dp[i-1][1]+prices[i]-fee);
-            // dp[day][1] = I buy or hold the existing stock
-            dp[i][1] = Math.max(dp[i-1][0]-prices[i], dp[i-1][1]); 
+
+        int[][] dp = new int[n + 1][2];
+
+        for (int i = n; i >= 0; i--) {
+            for (int buy = 1; buy >= 0; buy--) {
+                int ans = 0;
+                if (i == n) {
+                    ans = 0;
+                } else if (buy == 1) {
+                    ans = Math.max(-prices[i] + dp[i+1][0], 0 + dp[i+1][1]);
+                } else {
+                    int willSell = prices[i] - fee + dp[i+1][1];
+                    int willNotSell = 0 + dp[i+1][0];
+                    ans = Math.max(willSell, willNotSell);
+                }
+                dp[i][buy] = ans;
+            }
         }
-        return Math.max(dp[n-1][0], dp[n-1][1]);
+
+        return dp[0][1];
+    }
+}
+
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        /*
+            using tabulation + space-optimization
+            TC : O(2*n) ~ O(n)
+            SC : O(2)   ~ O(1)
+        */
+
+        int n = prices.length;
+
+        int[] next = new int[2];
+
+        for (int i = n; i >= 0; i--) {
+            int[] curr = new int[2];
+            for (int buy = 1; buy >= 0; buy--) {
+                int ans = 0;
+                if (i == n) {
+                    ans = 0;
+                } else if (buy == 1) {
+                    ans = Math.max(-prices[i] + next[0], 0 + next[1]);
+                } else {
+                    int willSell = prices[i] - fee + next[1];
+                    int willNotSell = 0 + next[0];
+                    ans = Math.max(willSell, willNotSell);
+                }
+                curr[buy] = ans;
+            }
+            next = curr;
+        }
+
+        return next[1];
     }
 }

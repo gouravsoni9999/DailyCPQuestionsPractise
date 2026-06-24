@@ -1,58 +1,109 @@
 class Solution {
     int n;
-    int[][] dp;
-    private int solve(int[] prices, int day,int buy){
-        if (day >= n)
-            return 0;//base case
-        int profit = 0;
-        if (dp[day][buy] != -1)
-            return dp[day][buy];
-        if (buy == 1){
-            // buy stock on day and sell it on next day
-            int iBuyStock = -prices[day]+solve(prices, day+1, 0);
-            
-            int iNotBuyStock = solve(prices, day+1, 1);
-            //can buy on next day
-            profit = Math.max(iBuyStock, iNotBuyStock);
+    Integer[][] dp;
+    private int solve(int i,int[] prices,int buy){
+        if(i >= n)
+            return 0;
+        
+        if(dp[i][buy] != null) 
+            return dp[i][buy];
+
+        int ans = 0;
+
+        if(buy == 1){
+            int willBuy = -prices[i] + solve(i+1, prices, 0);
+            int willNotBuy = 0 + solve(i+1, prices, 1);
+            ans = Math.max(willBuy, willNotBuy);    
         }
-        else{//buy is false which means sell is true
-            // sell stock on day and it adds up to profit made after 2 days
-            int iSellStock = prices[day] + solve(prices, day+2, 1);
-            // not sell stock
-            int iNotSellStock = solve(prices, day+1, 0);
-            profit = Math.max(iSellStock, iNotSellStock);
+
+        else{
+            int willSell = prices[i] + solve(i+2, prices, 1); // now will buy on day after tommorow
+            int willNotSell = 0 + solve(i+1, prices, 0);
+            ans = Math.max(willSell, willNotSell);
         }
-        return dp[day][buy] = profit;
+        return dp[i][buy] = ans;
     }
     public int maxProfit(int[] prices) {
-	// recursion + memoization
-        int buy = 1;
+        /*
+            using recursion + memoization
+            TC : O(2*n)
+            SC : O(2*n) + O(n) stack space
+        */
         n = prices.length;
-        dp = new int[n][2];
-        for(int[] row: dp)
-            Arrays.fill(row, -1);
-        return solve(prices, 0, buy);        
+        dp = new Integer[n][2];
+        return solve(0, prices, 1);
     }
 }
+
+
 class Solution {
     public int maxProfit(int[] prices) {
-        
-        // tabulation method
+        /*
+            using tabulation
+            TC : O(2*n)
+            SC : O(2*n)
+        */
         int n = prices.length;
-        if (n == 1)
-            return 0;
-        int[] dp = new int[n];
-        // dp[i] -> the max total profit until day i
-        dp[0] = 0;//no profit as on 0th day I can only buy a stock
-        dp[1] = Math.max(prices[1] - prices[0], 0);
-        for(int i = 2;i < n;i++){
-            dp[i] = dp[i-1];
-            for(int j = 0;j < i;j++){
-                // find best j to buy the stock before selling it on ith day
-                int prev_profit = j>=2?dp[j-2]:0;
-                dp[i] = Math.max(dp[i], prices[i] - prices[j] + prev_profit);
+        int[][] dp = new int[n + 1][2];
+
+        for (int i = n; i >= 0; i--) {
+            for (int buy = 1; buy >= 0; buy--) {
+                int ans = 0;
+                if (i >= n)
+                    ans = 0;
+                else if (buy == 1) {
+                    int willBuy = -prices[i] + dp[i + 1][0];
+                    int willNotBuy = 0 + dp[i + 1][1];
+                    ans = Math.max(willBuy, willNotBuy);
+                }
+
+                else {
+                    int willSell = prices[i] + (((i + 2) >= n) ? 0 : dp[i + 2][1]); // now will buy on day after tommorow
+                    int willNotSell = 0 + dp[i + 1][0];
+                    ans = Math.max(willSell, willNotSell);
+                }
+                dp[i][buy] = ans;
             }
         }
-        return dp[n-1];
+
+        return dp[0][1];
+    }
+}
+
+class Solution {
+    public int maxProfit(int[] prices) {
+        /*
+            using tabulation + space-optimization
+            TC : O(2*n) ~ O(n)
+            SC : O(2*3)   ~ O(1)
+        */
+        int n = prices.length;
+        int[] next_next = new int[2];
+        int[] next = new int[2];
+        int[] curr = new int[2];
+
+        for (int i = n; i >= 0; i--) {
+            for (int buy = 1; buy >= 0; buy--) {
+                int ans = 0;
+                if (i >= n)
+                    ans = 0;
+                else if (buy == 1) {
+                    int willBuy = -prices[i] + next[0];
+                    int willNotBuy = 0 + next[1];
+                    ans = Math.max(willBuy, willNotBuy);
+                }
+
+                else {
+                    int willSell = prices[i] + (((i + 2) >= n) ? 0 : next_next[1]); // now will buy on day after tommorow
+                    int willNotSell = 0 + next[0];
+                    ans = Math.max(willSell, willNotSell);
+                }
+                curr[buy] = ans;
+            }
+            next_next = next.clone();
+            next = curr.clone();
+        }
+
+        return next[1];
     }
 }
