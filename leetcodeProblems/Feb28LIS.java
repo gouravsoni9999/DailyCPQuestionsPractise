@@ -177,6 +177,66 @@ class Solution {
 
         return dp[0][0];
 
+<<<<<<< HEAD
+=======
+    }
+}
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        /*
+         * tabulation + space-optimization
+         * TC : O(n^2)
+         * SC : O(n)
+         */
+        int n = nums.length;
+        int[] next = new int[n + 1];
+
+        for (int i = n - 1; i >= 0; i--) {
+            int[] curr = new int[n + 1];
+            for (int prevIdx = i - 1; prevIdx >= -1; prevIdx--) {
+                int ans = 0;
+
+                int not_take_len = 0 + next[prevIdx + 1];
+                int take_len = 0;
+                if (prevIdx == -1 || nums[prevIdx] < nums[i]) {
+                    take_len = 1 + next[i + 1]; // prevIdx becomes i
+                }
+
+                ans = Math.max(not_take_len, take_len);
+
+                curr[prevIdx + 1] = ans;
+            }
+            next = curr;
+        }
+
+        return next[-1 + 1];
+
+    }
+}
+
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        /*
+            using tabulation method
+            TC : O(n^2)
+            SC : O(n)
+        */
+        int n = nums.length;
+        int[] dp = new int[n];
+        Arrays.fill(dp, 1); // everybody can be a start of subsequence
+        int ans = 0;
+        for(int i = 0;i < n;i++){
+            for(int prevIdx = 0; prevIdx < i;prevIdx++){
+                if(nums[prevIdx] < nums[i]){
+                    dp[i] = Math.max(dp[i], 1 + dp[prevIdx]);
+                }
+            }
+            ans = Math.max(ans, dp[i]);
+        } 
+
+        return ans;
+>>>>>>> 4de15281d0234cc81d650932d8d607c814c2f46a
     }
 }
 
