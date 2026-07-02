@@ -18,6 +18,8 @@ class Solution {
 	}
 	public static String infixToPostfix(String s) {
 		// code here
+		// TC : O(n)
+		// SC : O(n)
 		StringBuilder res = new StringBuilder();
 		Stack<Character> stack = new Stack<>();
 		
