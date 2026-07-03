@@ -1,38 +1,57 @@
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
+
+        // brute force approach
         // TC : O(n^2)
         // SC : O(n)
+
         int n = nums.length;
-        int[] arr = new int[n];
-        for(int i = 0;i < n;i++){
-            int j = (i+1)%n;
-            while(j != i && nums[i] >= nums[j]){
-                j = (j+1)%n;
+
+        int[] nge = new int[n];
+        Arrays.fill(nge, -1);
+
+        for (int i = 0; i < n; i++) {
+            for(int j = 1;j < n;j++){
+                int idx = (i + j) % n;
+                if(nums[idx] > nums[i]){
+                    nge[i] = nums[idx];
+                    break;
+                }
             }
-            if(j != i)
-                arr[i] = nums[j];
-            else
-                arr[i] = -1;
         }
-        return arr;
+
+        return nge;
     }
 }
+
 class Solution {
     public int[] nextGreaterElements(int[] nums) {
-        // TC : O(2*n)
-        // SC : O(3*n)(to store the answer array)
+        /*
+            TC : O(n)
+            SC : O(n)
+        */
+        // using monotonically decreasing stack
+        Stack<Integer> stack = new Stack<>();
+
         int n = nums.length;
         int[] nge = new int[n];
-        Stack<Integer> stack = new Stack<>();
-        for (int i = 2 * n - 1; i >= 0; i--) {
-            while (!stack.isEmpty() && stack.peek() <= nums[i % n]) {
+
+        // first fill stack with all nums[i]
+        for(int i = n-1;i >= 0;i--){
+            while(!stack.isEmpty() && stack.peek() <= nums[i]){
                 stack.pop();
             }
-            if (i < n) {
-                nge[i] = stack.isEmpty() ? -1 : stack.peek();
+            stack.push(nums[i]);
+        }   
+        // then do regular NGE problem
+        for(int i = n-1;i >= 0;i--){
+            while(!stack.isEmpty() && stack.peek() <= nums[i]){
+                stack.pop();
             }
-            stack.push(nums[i % n]);
+            nge[i] = stack.isEmpty() ? -1 : stack.peek();
+            stack.push(nums[i]);
         }
+
         return nge;
     }
 }

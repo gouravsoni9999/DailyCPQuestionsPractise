@@ -41,3 +41,32 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        // brute force approach
+        // TC : O(n^2)
+        // SC : O(1)
+        int m = nums1.length;
+        int n = nums2.length;
+
+        Map<Integer, Integer> map = new HashMap<>();
+
+        for(int i = 0;i < n;i++){
+            for(int j = i+1;j < n;j++){
+                if(nums2[i] < nums2[j]){
+                    map.put(nums2[i], nums2[j]);
+                    break;
+                }
+            }
+        }
+
+        int[] res = new int[m];
+
+        for(int i = 0;i < m;i++){
+            res[i] = map.getOrDefault(nums1[i], -1);
+        }
+
+        return res;
+    }
+}
