@@ -1,22 +1,24 @@
 class Solution {
     int n;
-    
-    private int[] findLeftMaxHeightAtEachIdx(int[] height){
+
+    private int[] findLeftMaxHeightAtEachIdx(int[] height) {
         int[] prefixMax = new int[n];
         prefixMax[0] = height[0];
-        for(int i = 1;i < n;i++){
-            prefixMax[i] = Math.max(prefixMax[i-1], height[i]);
+        for (int i = 1; i < n; i++) {
+            prefixMax[i] = Math.max(prefixMax[i - 1], height[i]);
         }
         return prefixMax;
     }
-    private int[] findRightMaxHeightAtEachIdx(int[] height){
+
+    private int[] findRightMaxHeightAtEachIdx(int[] height) {
         int[] suffixMax = new int[n];
-        suffixMax[n-1] = height[n-1];
-        for(int i = n-2;i >= 0;i--){
-            suffixMax[i] = Math.max(suffixMax[i+1], height[i]);
+        suffixMax[n - 1] = height[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            suffixMax[i] = Math.max(suffixMax[i + 1], height[i]);
         }
         return suffixMax;
     }
+
     public int trap(int[] height) {
         // TC : O(n)
         // SC : O(n)
@@ -24,11 +26,11 @@ class Solution {
         int[] prefixMax = findLeftMaxHeightAtEachIdx(height);
         int[] suffixMax = findRightMaxHeightAtEachIdx(height);
         int waterLogged = 0;
-        for(int i = 0;i < n;i++){
+        for (int i = 0; i < n; i++) {
             int leftMax = prefixMax[i];
             int rightMax = suffixMax[i];
             // water will be trapped if height[i] < leftMax and height[i] < rightMax
-            if(height[i] < leftMax && height[i] < rightMax){
+            if (height[i] < leftMax && height[i] < rightMax) {
                 waterLogged += Math.min(leftMax, rightMax) - height[i];
             }
         }
@@ -38,22 +40,60 @@ class Solution {
 
 class Solution {
     public int trap(int[] height) {
+        // optimal approach
+        // TC : O(n)
+        // SC : O(1)
+
+        int n = height.length;
+        int l = 0;
+        int r = n - 1;
+
+        int total = 0;
+        int leftMax = 0;
+        int rightMax = 0;
+
+        while (l < r) {
+            if (height[l] <= height[r]) {
+                if (leftMax > height[l]) {
+                    total += (leftMax - height[l]);
+                } else {
+                    leftMax = Math.max(leftMax, height[l]);
+                }
+
+                l++;
+            } else {
+                if (rightMax > height[r]) {
+                    total += (rightMax - height[r]);
+                } else {
+                    rightMax = height[r];
+                }
+
+                r--;
+            }
+        }
+
+        return total;
+    }
+}
+
+class Solution {
+    public int trap(int[] height) {
         // TC : O(n)
         // SC : O(1)
         // 2-pointer approach
         int n = height.length;
-        int l = 0, r = n-1;
+        int l = 0, r = n - 1;
         int ans = 0;
         int lmax = 0, rmax = 0; // lmax and rmax found so far
-        while(l < r){
+        while (l < r) {
             lmax = Math.max(lmax, height[l]); // this is boundary on left
             rmax = Math.max(rmax, height[r]); // this is boundary on right
-            if(lmax <= rmax){
+            if (lmax <= rmax) {
                 // lmax is the deciding boundary that decides how much water will be trapped
                 ans += lmax - height[l]; // for that lth idx height of water trapped is boundary - its height
                 l++;
-            }else{
-                // rmax is the deciding boundary that decides how much  water will be trapped
+            } else {
+                // rmax is the deciding boundary that decides how much water will be trapped
                 ans += rmax - height[r];
                 r--;
             }
