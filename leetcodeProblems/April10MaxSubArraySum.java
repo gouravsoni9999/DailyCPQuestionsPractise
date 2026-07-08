@@ -14,6 +14,30 @@ class Solution {
         return maxSum;
     }
 }
+
+class Solution {
+    public int maxSubArray(int[] nums) {
+        // using kadane's Algo
+        // TC : O(n)
+        // SC : O(1)
+        int maxSum = nums[0];
+        int currSum = nums[0];
+        int n = nums.length;
+
+        for(int i = 1;i < n;i++){
+            int num = nums[i];
+            currSum += num;
+             
+            currSum = Math.max(currSum, num); // start from this, or continue with existing subarray
+
+            maxSum = Math.max(currSum, maxSum);
+        }
+
+        return maxSum;
+    }
+}
+
+
 class Solution {
     int n;
     private int solve(int[] nums,int l,int r){
