@@ -33,8 +33,8 @@ class Solution {
                 maxHeap.poll();
             }
             if(j >= k-1){
-		// one of the end of a window
-		// therefore push in the result
+                // one of the end of a window
+                // therefore push in the result
                 res[l++] = maxHeap.peek()[0];
             }
         }
