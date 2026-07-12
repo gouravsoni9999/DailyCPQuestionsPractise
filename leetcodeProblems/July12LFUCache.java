@@ -68,11 +68,7 @@ class LFUCache {
             minFreq++;
         }
 
-        LRUCacheList nextHigherFreqList = new LRUCacheList();
-        if(freqListMap.containsKey(freq+1)){
-            // list already exist where node should now be inserted
-            nextHigherFreqList = freqListMap.get(freq+1); // make this list point to existing list
-        }
+        LRUCacheList nextHigherFreqList = freqListMap.getOrDefault(freq+1, new LRUCacheList());
         node.cnt += 1; // now node's freq has increased by 1
         nextHigherFreqList.addFront(node); // add the node after the head in LRU Cache List
         freqListMap.put(node.cnt,nextHigherFreqList); // put back modified list in map
@@ -108,11 +104,7 @@ class LFUCache {
             }
             // new value needs to be added now which was not present previously
             minFreq = 1; // this updates to 1 : as new node has now freq as 1
-            LRUCacheList listFreq = new LRUCacheList();
-            if(freqListMap.containsKey(minFreq)){
-                // already present
-                listFreq = freqListMap.get(minFreq);
-            }
+            LRUCacheList listFreq = freqListMap.getOrDefault(minFreq, new LRUCacheList()); // either already existing or make a new list
             // now add the node in listFreq
             Node node = new Node(key, value);
             listFreq.addFront(node); // add it to front (becoz it is Recently Used)
