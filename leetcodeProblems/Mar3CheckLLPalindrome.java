@@ -106,29 +106,64 @@ class Solution {
     }
 }
 
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
 class Solution {
-    public boolean isPalindrome(ListNode head) {
-        ListNode slow = head;
-        ListNode fast = head;
+    private ListNode reverse(ListNode head) {
         ListNode prev = null;
-        while(fast != null && fast.next != null){
-            fast = fast.next.next;
-            ListNode temp = slow.next;//store it
-            slow.next = prev;
-            prev = slow;
-            slow = temp;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode nextNode = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextNode;
         }
-        if (fast != null){
-            // odd length
+        return prev;
+    }
+
+    private void print(ListNode head) {
+        while (head != null) {
+            System.out.print(head.val + " ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+
+    public boolean isPalindrome(ListNode head) {
+        // TC : O(n)
+        // SC : O(1)
+        // by changing links only
+        ListNode slow = head, fast = head;
+
+        // using Tortoise & Hare Algo : find the first middle(even) and middle(1st middle) of LL
+        while (fast.next != null && fast.next.next != null) {
             slow = slow.next;
+            fast = fast.next.next;
         }
-        while(prev != null && slow != null){
-            if (prev.val != slow.val){
+        ListNode newHead = reverse(slow.next); // reverse later half of LL
+        print(head);
+        print(newHead);
+        ListNode first = head, second = newHead; // first half of LL's pointer : first and later half's LL pointer: second
+
+        while (second != null) {
+            if (first.val != second.val) {
+                reverse(newHead); // first make it original LL
                 return false;
             }
-            prev = prev.next;
-            slow = slow.next;
+            // iterate over both part of LL
+            first = first.next;
+            second = second.next;
         }
+
+        reverse(newHead); //first make it original LL
         return true;
     }
 }
