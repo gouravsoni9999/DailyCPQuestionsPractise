@@ -1,13 +1,49 @@
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+class ListNode{
+    int val;
+    ListNode next;
+    ListNode(int val){
+        this.val = val;
+    }
+}
+
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        // TC : O(n)
+        // SC : O(n)
+        List<Integer> list = new ArrayList<>();
+        for(ListNode temp = head;temp != null;temp = temp.next){
+            list.add(temp.val);
+        }
+        if(list.reversed().equals(list)){
+            // list.reversed() returns a new list(doesnot modify the existing list)
+            // .equals() methods is used for : comparing actual values of list 
+            return true;
+        }
+        return false;
+    }
+}
+
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        // TC : O(n)
+        // SC : O(n)
+        // using stack DS 
+        Stack<Integer> stack = new Stack<>();
+        // store every value in stack
+        for(ListNode temp = head;temp != null;temp = temp.next){
+            stack.push(temp.val);
+        }
+        // now, compare from starting if stack's popped values are not same: linked list is not a palindrome
+        for(ListNode temp = head;temp != null;temp = temp.next){
+            if(temp.val != stack.pop()){
+                return false;
+            }
+        }
+        // else, every value matched
+        return true;
+    }
+}
+
 class Solution {
     private boolean isPalindrome(List<Integer> ls){
         int n = ls.size();
@@ -31,16 +67,8 @@ class Solution {
         return isPalindrome(ls);
     }
 }
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+
+
 class Solution {
     public ListNode middleNode(ListNode head) {
         if (head == null)
@@ -77,16 +105,7 @@ class Solution {
         return true;
     }
 }
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+
 class Solution {
     public boolean isPalindrome(ListNode head) {
         ListNode slow = head;
@@ -113,16 +132,8 @@ class Solution {
         return true;
     }
 }
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
+
+
 class Solution {
     ListNode curr;
     public boolean recurr(ListNode head) {
