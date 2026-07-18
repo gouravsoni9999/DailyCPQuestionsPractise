@@ -8,7 +8,7 @@ class Solution {
             list.add(temp.val);
             temp = temp.next;
         }
-        Collections.sort(list);
+        Collections.sort(list); // O(nlogn)
         temp = head;
         int i = 0;
         while(temp != null){
