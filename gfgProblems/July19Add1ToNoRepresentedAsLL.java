@@ -64,7 +64,7 @@ class RecursiveSolution {
     public Node addOne(Node head) {
         // using recursion + backtracking (without reversal of Linked List)
         // TC : O(n)
-        // SC : 
+        // SC : O(n)
         int carry = solve(head);
         if(carry == 1){
             Node newNode = new Node(1);
