@@ -31,8 +31,9 @@ public class July22StackImplementationUsingArray {
     public static void main(String[] args) {
         Scanner scn = new Scanner(System.in);
         int N = scn.nextInt(); // n no of books
+        scn.nextLine();
         Stack shelf = new Stack(N);
-        for(int i = 0;i <= N;i++){
+        for(int i = 0;i < N;i++){
             String str = scn.nextLine();
             if(!str.equals(""))
                 shelf.push(str);
