@@ -1,88 +1,105 @@
-// using DFS
-class Solution {
-    boolean[] visited;
-    private boolean hasCycleDFS(int i,int[][] edges,int parent){
-        visited[i] = true;// mark it true
-        for(int[] edge: edges){
-            int u = edge[0];
-            int v = edge[1];
-            if(u != i && v != i){
-                // this edge doesnot contain i vertex
-                // therefore explore other edges
-                continue;
-            }
-            // u or v is i
-            int neighbour = (u == i)?v:u;
-            if(neighbour == parent){
-                continue;//don't revisit it: no cycle
-            }
-            if(visited[neighbour] == true){
-                // if parent[neighbour] != i && visited[neighbour] == true
-                return true;//cycle exists
-            }
-            // if parent[neighbour] != i && visited[neighbour] == false
-            if (hasCycleDFS(neighbour, edges, i)){
-                return true;   
-            }
-        }
-        return false;
-    }
-    public boolean isCycle(int V, int[][] edge) {
-        // Code here
-        visited = new boolean[V];
-        for(int i = 0;i < V;i++){
-            if(!visited[i] && hasCycleDFS(i, edge, -1)){
-                return true;
-            }
-        }
-        return false;
-    }
+import java.util.*;
+import java.util.Queue;
+class DFSSolution {
+	private boolean dfs(int src, int parent, int V, List<List<Integer>> adjList, boolean[] visited) {
+		// using DFS
+		
+		visited[src] = true; // mark 0 as visited
+		
+		for (int neigh : adjList.get(src)) {
+			if (!visited[neigh]) {
+				if (dfs(neigh, src, V, adjList, visited)) {
+					return true; // cycle detected
+				}
+			} else if (neigh != parent) {
+				// if neigh was already visited and is not a parent
+				return true; // cycle detected
+			}
+		}
+		
+		return false; // no cycle detected
+	}
+	public boolean isCycle(int V, int[][] edges) {
+		// TC : O(N + 2E) // nodes + summation of degree(which is summation of adjacent nodes)
+		// SC : O(N) + O(N) recurive stack space
+		// creating adjacency list
+		List<List<Integer>> adjList = new ArrayList<>();
+		for (int i = 0; i < V; i++) {
+			adjList.add(new ArrayList<>());
+		}
+		
+		for (int[] e : edges) {
+			int u = e[0];
+			int v = e[1];
+			adjList.get(u).add(v);
+			adjList.get(v).add(u);
+		}
+		
+		boolean[] visited = new boolean[V];
+		
+		for (int i = 0; i < V; i++) {
+			if (!visited[i] && dfs(i, -1, V, adjList, visited)) {
+				// if i is not visited and cycle is detected in that component
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
-// using BFS
-class Solution {
-    boolean[] visited;
-    private boolean hasCycleBFS(int i,int[][] edges){
+
+
+class BFSSolution {
+    private boolean BFS(int src, int V,List<List<Integer>> adjList, boolean[] visited){
+        // using BFS
         Queue<int[]> que = new LinkedList<>();
-        que.add(new int[]{i,-1});
-        visited[i] = true;// mark it true
+        que.add(new int[]{src,-1}); // {node, parent}
+        visited[src] = true; // mark 0 as visited
+       
         while(!que.isEmpty()){
-            int[] item = que.poll();
-            i = item[0];
-            int parent = item[1];
-            for(int[] edge: edges){
-                int u = edge[0];
-                int v = edge[1];
-                if(u != i && v != i){
-                    // this edge doesnot contain i vertex
-                    // therefore explore other edges
-                    continue;
+            int node = que.peek()[0];
+            int parent = que.peek()[1];
+            que.poll();
+            
+            for(int neigh : adjList.get(node)){
+                if(!visited[neigh]){
+                    visited[neigh] = true; // mark it visited
+                    que.add(new int[] {neigh, node});
+                }else if(neigh != parent){
+                    // it has already been visited and is also not the parent
+                    // cycle
+                    return true;
                 }
-                // u or v is i
-                int neighbour = (u == i)?v:u;
-                if(neighbour == parent){
-                    continue;//don't revisit it: no cycle
-                }
-                if(visited[neighbour] == true){
-                    // if parent[neighbour] != i && visited[neighbour] == true
-                    return true;//cycle exists
-                }
-                // if parent[neighbour] != i && visited[neighbour] == false
-                que.add(new int[]{neighbour, i});
-                visited[neighbour] = true;
             }
         }
-            
         
-        return false;
+        return false; // no cycle detected
     }
-    public boolean isCycle(int V, int[][] edge) {
-        // Code here
-        visited = new boolean[V];
+    public boolean isCycle(int V, int[][] edges) {
+        // TC : O(N + 2E) // nodes + summation of degree(which is summation of adjacent nodes)
+        // SC : O(N)
+        // creating adjacency list
+        List<List<Integer>> adjList = new ArrayList<>();
         for(int i = 0;i < V;i++){
-            if(!visited[i] && hasCycleBFS(i, edge)){
+            adjList.add(new ArrayList<>());
+        }
+        
+        for(int[] e : edges){
+            int u = e[0];
+            int v = e[1];
+            adjList.get(u).add(v);
+            adjList.get(v).add(u);
+        }
+        
+        boolean[] visited = new boolean[V];
+        
+        for(int i = 0;i < V;i++){
+            if(!visited[i] && BFS(i, V, adjList, visited)){
+                // if i is not visited and cycle is detected in that component
                 return true;
             }
         }
+        
         return false;
     }
 }
