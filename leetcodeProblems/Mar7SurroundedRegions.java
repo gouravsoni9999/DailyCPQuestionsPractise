@@ -15,6 +15,7 @@ class Solution {
         }
     }
     public void solve(char[][] board) {
+        // TC : O(m.n) and SC
         m = board.length;
         n = board[0].length;
         visited = new int[m][n];//all are by-default 0s
