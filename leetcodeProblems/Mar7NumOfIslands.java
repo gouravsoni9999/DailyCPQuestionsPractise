@@ -1,4 +1,6 @@
-class Solution {
+import java.util.*;
+import java.util.Queue;
+class LeetCodeDFSSolution {
     int m;
     int n;
     int islandCnt;
@@ -41,7 +43,8 @@ class Solution {
         return islandCnt;
     }
 }
-class Solution {
+
+class LeetcodeBFSSolution {
     int m;
     int n;
     int islandCnt;
@@ -90,4 +93,56 @@ class Solution {
         }
         return islandCnt;
     }
+}
+
+// geeks for geeks question : horizontally, vertically, diagonally
+class GFGBFSSolution {
+	
+	int m;
+	int n;
+	boolean[][] vis;
+	
+	private void bfs(int i, int j, char[][] grid) {
+		
+		Queue<int[]> que = new LinkedList<>();
+		
+		que.add(new int[] {i, j});
+		vis[i][j] = true; // mark it visited
+		
+		while (!que.isEmpty()) {
+			int[] coord = que.poll();
+			for (int drow = -1; drow <= 1; drow++) {
+				for (int dcol = -1; dcol <= 1; dcol++) {
+					int x = coord[0] + drow;
+					int y = coord[1] + dcol;
+					// if {x,y} is not out-of-bounds and is not visited and is land
+					if (x >= 0 && y >= 0 && x < m && y < n && !vis[x][y] && grid[x][y] == 'L') {
+						que.add(new int[] {x, y});
+						vis[x][y] = true;
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public int countIslands(char[][] grid) {
+		// using BFS
+        // SC : O(m.n)
+        // TC : O(m.n)
+		m = grid.length;
+		n = grid[0].length;
+		vis = new boolean[m][n];
+		int islands = 0;
+		
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				if (!vis[i][j] && grid[i][j] == 'L') {
+					islands++;
+					bfs(i, j, grid);
+				}
+			}
+		}
+		return islands;
+	}
 }
