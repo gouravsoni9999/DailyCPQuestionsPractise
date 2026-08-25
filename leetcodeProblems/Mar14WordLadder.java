@@ -1,36 +1,55 @@
+import java.util.*;
+import java.util.Queue;
 class Solution {
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        // using BFS
-        Set<String> visited = new HashSet<>();
-        Set<String> wordSet = new HashSet<>();
-        for(String string: wordList){
-            wordSet.add(string);
+        // TC : O(m.n.n.26)
+        // SC : O(m.n) where m is wordList.size() 
+        int n = beginWord.length();
+        // make a set of all words in wordList
+        Set<String> set = new HashSet<>();
+        for (String str : wordList) {
+            set.add(str);
         }
+
+        if (!set.contains(endWord)) {
+            return 0; // endWord is not in wordList
+        }
+
         Queue<String> que = new LinkedList<>();
         que.add(beginWord);
-        visited.add(beginWord);
-        int levels = 0;
-        while(!que.isEmpty()){
-            int n = que.size();
-            while(n-->0){
-                String str = que.poll();
-                if(str.equals(endWord)){
-                    return levels+1;
-                }
-                for(int i = 0;i < str.length();i++){
-                    for(int j = 0;j < 26;j++){
-                        char ch = (char)(j+'a');
-                        String newString = str.substring(0,i)+ch+str.substring(i+1,str.length());
-                        if(!visited.contains(newString) && wordSet.contains(newString)){
-                            que.add(newString);
-                            visited.add(newString);
+        Map<String, Integer> map = new HashMap<>();
+        map.put(beginWord, 1); // 1st level 
+
+        set.remove(beginWord); // set removes startWord, as it is not required(and can hamper later if not removed)
+
+        // using BFS
+        while (!que.isEmpty()) {
+            // find all elements in that level, and then operate 
+            for (int size = que.size(); size > 0; size--) {
+                String word = que.poll();
+                int level = map.get(word);
+
+                if(word.equals(endWord))
+                    return level;
+                
+                for(int i = 0;i < n;i++){
+                    StringBuilder sb = new StringBuilder(word);
+                    char og = word.charAt(i);
+                    for(char ch = 'a';ch <= 'z';ch++){
+                        sb.setCharAt(i, ch);
+                        String str = sb.toString();
+                        if(set.contains(str)){
+                            set.remove(str);
+                            que.add(str);
+                            map.put(str, level+1);
                         }
                     }
                 }
                 
             }
-            levels++;
         }
+
         return 0;
+
     }
 }
