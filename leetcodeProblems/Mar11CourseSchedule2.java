@@ -1,45 +1,73 @@
-class Solution {
-    private int[] topoSort(int numCourses, int[][] prerequisites){
-        int nodeCnt = 0;
-        int[] order = new int[numCourses];
-        // using kahn's algo
-        int[] indegree = new int[numCourses];
-        // populate indegree of every vertex in graph
-        for(int[] revEdge: prerequisites){
-            int v = revEdge[0];
-            indegree[v]++;
-        }
-        // using Queue: storing vertices having indegree = 0
-        Queue<Integer> que = new LinkedList<>();
-        for(int i = 0;i < numCourses;i++){
-            if(indegree[i] == 0) que.add(i);
-        }
-        // BFS
-        int i = 0;
-        while(!que.isEmpty()){
-            int vertex = que.poll();
-            nodeCnt++;
-            order[i++] = vertex;
-            for(int[] revEdge : prerequisites){
-                int u = revEdge[1];
-                int v = revEdge[0];
-                if(u != vertex)
-                    continue;
-                indegree[v]--;
-                if(indegree[v] == 0) que.add(v);
-            }
-        }
-        return (nodeCnt == numCourses)?order : new int[0];
+import java.util.*;
+import java.util.Queue;
+import java.util.Stack;
+class KahnSolution {
+    public int[] findOrder(int V, int[][] edges) {
+        // TC : O(V + E) 
+        // SC : O(V)
+        // using BFS (Kahn's Topo Sort Algo)
 
-    }
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
-        // detect cycle: if present : return an empty array
-        // not detected: return the order of courses
-        return topoSort(numCourses, prerequisites);
+        // if the graph is cyclic, I cannot generate topo sort list of V nodes
+
+        int[] indegree = new int[V];
+
+        // make adjacency list
+        List<List<Integer>> adjList = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        // build adj. list
+        for (int i = 0; i < edges.length; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+
+            // v -> u
+            adjList.get(v).add(u);
+            indegree[u]++;
+        }
+
+        // make a queue only containing nodes having indegree 0
+        Queue<Integer> que = new LinkedList<>();
+        for (int i = 0; i < V; i++) {
+            if (indegree[i] == 0)
+                que.add(i);
+        }
+
+        List<Integer> list = new ArrayList<>();
+
+        // std. BFS algo
+        while (!que.isEmpty()) {
+            int node = que.poll();
+            list.add(node);
+
+            // for all adjacent nodes, decrease there indegree
+            for (int adjNode : adjList.get(node)) {
+                indegree[adjNode]--;
+                if (indegree[adjNode] == 0) {
+                    que.add(adjNode);
+                }
+            }
+
+        }
+
+        if (list.size() != V) {
+            // graph has cycle
+            return new int[0];
+        }
+
+        int[] res = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            res[i] = list.get(i);
+        }
+
+        return res;
     }
 }
+
 // using DFS
-class Solution {
+class DFSTopoSolution {
     boolean[] visited;
     boolean[] inRecursion;
     Stack<Integer> stack;
