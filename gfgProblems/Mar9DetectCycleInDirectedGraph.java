@@ -132,45 +132,61 @@ class BFSSolution {
         return false;
     }
 }
+
 // using Topological sort (using Kahn's algo)
 class KahnSolution {
-    private int topoSort(int V,int[][] edges){
-        int nodeCnt = 0;
-        // using kahn's algo
-        int[] indegree = new int[V];
-        // populate indegree array
-        for(int[] edge: edges){
-            int v = edge[1];
-            indegree[v]++;
-        }
-        // maintain a queue where elements have indegree 0
-        Queue<Integer> que = new LinkedList<>();
-        for(int i = 0;i < V;i++){
-            if(indegree[i] == 0) 
-                que.add(i);
-        }
-        while(!que.isEmpty()){
-            int i = que.poll();
-            nodeCnt++;
-            for(int[] edge: edges){
-                int u = edge[0];
-                int v = edge[1];
-                if(u != i) continue;
-                // else u == i and v is its neighbour
-                // reduce indegree of v
-                indegree[v]--;
-                if(indegree[v] == 0) que.add(v);
-            }
-        }
-        return nodeCnt;
-    }
-    public boolean isCyclic(int V, int[][] edges) {
-        // code here
-        // using Topological sorting (Kahn's algo of BFS)
-        // to detect cycle in graph
-        int nodeCnt = topoSort(V, edges);
-        if(nodeCnt == V) return false;//no cycle exist
-        return true;//no topological sort -> cycle exist
-    }
+	public boolean isCyclic(int V, int[][] edges) {
+	    // TC : O(V + E) 
+	    // SC : O(V)
+		// using BFS (Kahn's Topo Sort Algo)
+		
+		// if the graph is cyclic, I cannot generate topo sort list of V nodes
+		
+		
+		int[] indegree = new int[V];
+		
+		// make adjacency list
+		List<List<Integer>> adjList = new ArrayList<>();
+		
+		for (int i = 0; i < V; i++) {
+			adjList.add(new ArrayList<>());
+		}
+		
+		// build adj. list
+		for (int i = 0; i < edges.length; i++) {
+			int u = edges[i][0];
+			int v = edges[i][1];
+			
+			// u -> v
+			adjList.get(u).add(v);
+			indegree[v]++;
+		}
+		
+		// make a queue only containing nodes having indegree 0
+		Queue<Integer> que = new LinkedList<>();
+		for (int i = 0; i < V; i++) {
+			if (indegree[i] == 0)
+				que.add(i);
+		}
+		
+		int cnt = 0; // stores how many nodes are present in topo sort list
+		
+		// std. BFS algo
+		while (!que.isEmpty()) {
+			int node = que.poll();
+			cnt++;
+			
+			// for all adjacent nodes, decrease there indegree
+			for (int adjNode : adjList.get(node)) {
+				indegree[adjNode]--;
+				if (indegree[adjNode] == 0) {
+					que.add(adjNode);
+				}
+			}
+			
+		}
+		
+		// if set contains all nodes, no cycle
+		return cnt != V;
+	}
 }
-
