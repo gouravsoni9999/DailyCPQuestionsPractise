@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.Queue;
 class DFSSolution {
     int V;
     boolean[] vis;
@@ -56,5 +57,53 @@ class DFSSolution {
         }
 
         return res;
+    }
+}
+
+class BFSSolution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        // using BFS -> Kahn's Topo Sort Algo
+        // TC : O(V + E) similar to topsort + sorting of list + revAdjList making
+        // SC : O(V) similar to toposort + sorting of list + revAdjList making
+        int V = graph.length;
+
+        // the only thing is to reverse the graph, means all directed edges' directions are reversed
+        List<List<Integer>> revAdjList = new ArrayList<>();
+        int[] indegree = new int[V]; 
+        for(int i = 0;i < V;i++){
+            revAdjList.add(new ArrayList<>());
+        }
+        for(int i = 0;i < V;i++){
+            for(int adjNode : graph[i]){
+                // adjNode -> i
+                revAdjList.get(adjNode).add(i);
+                indegree[i]++;
+            }
+        }
+        
+        List<Integer> safeNodesList = new ArrayList<>();
+        // execute same Kahn's Algo on revAdjList
+        Queue<Integer> que = new LinkedList<>(); // stores those nodes having indegree 0
+        for(int i = 0;i < V;i++){
+            if(indegree[i] == 0){
+                que.add(i);
+            }
+        }
+
+        // Std. BFS step
+        while(!que.isEmpty()){
+            int node = que.poll();
+            safeNodesList.add(node);
+            for(int adjNode : revAdjList.get(node)){
+                indegree[adjNode]--;
+                if(indegree[adjNode] == 0){
+                    que.add(adjNode);
+                }
+            }
+        }
+
+        // sort resultant list in asc. order(as per question)
+        Collections.sort(safeNodesList);
+        return safeNodesList;
     }
 }
