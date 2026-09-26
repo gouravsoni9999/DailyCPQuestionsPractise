@@ -19,18 +19,18 @@ class Cube {
     Cube left;
     Cube right;
     Cube down;
-    Cube up;
+    Cube top;
 
     Cube(int cubeNo) {
         this.cubeNo = cubeNo;
     }
 
-    Cube(int cubeNo, Cube left, Cube right, Cube down, Cube up) {
+    Cube(int cubeNo, Cube left, Cube right, Cube down, Cube top) {
         this.cubeNo = cubeNo;
         this.left = left;
         this.right = right;
         this.down = down;
-        this.up = up;
+        this.top = top;
     }
 
     void insertAtDir(String dir, Cube cube) {
@@ -39,7 +39,7 @@ class Cube {
         } else if (dir.equals("right")) {
             this.right = cube;
         } else if (dir.equals("up")) {
-            this.up = cube;
+            this.top = cube;
         } else {
             this.down = cube;
         }
@@ -78,17 +78,17 @@ public class NidhisConstruction {
         Map<Integer, Cube> map = new HashMap<>();
 
         // now, we can process commands
-        for(int i = 0;i < N;i++){
+        for (int i = 0; i < N; i++) {
             Command cmd = cmds[i];
             int existingCube = cmd.existingCube;
             int newCube = cmd.newCube;
             String dir = cmd.dir;
 
-            if(!map.containsKey(existingCube)){
+            if (!map.containsKey(existingCube)) {
                 map.put(existingCube, new Cube(existingCube));
             }
 
-            if(!map.containsKey(newCube)){
+            if (!map.containsKey(newCube)) {
                 map.put(newCube, new Cube(newCube));
             }
 
@@ -101,7 +101,7 @@ public class NidhisConstruction {
 
         Cube cube = map.get(targetCube);
 
-        System.out.print(((cube.up == null) ? -1 : cube.up.cubeNo) + " ");
+        System.out.print(((cube.top == null) ? -1 : cube.top.cubeNo) + " ");
         System.out.print(((cube.down == null) ? -1 : cube.down.cubeNo) + " ");
         System.out.print(((cube.left == null) ? -1 : cube.left.cubeNo) + " ");
         System.out.print(((cube.right == null) ? -1 : cube.right.cubeNo) + " ");
