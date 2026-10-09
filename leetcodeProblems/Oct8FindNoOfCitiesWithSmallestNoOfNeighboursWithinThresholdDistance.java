@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.Queue;
 class Solution {
     public int findTheCity(int n, int[][] edges, int distanceThreshold) {
 
@@ -52,6 +53,80 @@ class Solution {
             if (cnt <= cntCity) {
                 // found out better city
                 cntCity = cnt;
+                cityNo = city;
+            }
+        }
+
+        return cityNo;
+    }
+}
+
+class DijkstraSolution {
+    int INF = (int) 1e9;
+
+    // O(ElogV)
+    private int dijkstra(int srcCity, int n, List<List<int[]>> adjList, int distanceThreshold) {
+        Queue<int[]> que = new PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0])); // {dist, node}
+
+        int[] dist = new int[n];
+        Arrays.fill(dist, INF);
+
+        que.add(new int[] { 0, srcCity });
+        dist[srcCity] = 0;
+
+        while (!que.isEmpty()) {
+            int node = que.peek()[1];
+            int dis = que.peek()[0];
+            que.poll();
+
+            for (int[] it : adjList.get(node)) {
+                int adjNode = it[0];
+                int edW = it[1];
+
+                if (edW + dis < dist[adjNode]) {
+                    dist[adjNode] = edW + dis;
+                    que.add(new int[] { dist[adjNode], adjNode });
+                }
+            }
+        }
+
+        int cnt = 0;
+        for (int city = 0; city < n; city++) {
+            if (dist[city] <= distanceThreshold) {
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
+
+    public int findTheCity(int n, int[][] edges, int distanceThreshold) {
+        // TC : O(V.ElogV)
+        // SC : O(V + E)
+        // using Dijkstra's Algo
+
+        // make adjList
+        List<List<int[]>> adjList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        for (int[] e : edges) {
+            int u = e[0];
+            int v = e[1];
+            int wt = e[2];
+
+            adjList.get(u).add(new int[] { v, wt });
+            adjList.get(v).add(new int[] { u, wt });
+        }
+
+        int cityNo = -1;
+        int minCityCnt = n;
+
+        for (int city = 0; city < n; city++) {
+            int cnt = dijkstra(city, n, adjList, distanceThreshold);
+            if (cnt <= minCityCnt) {
+                minCityCnt = cnt;
                 cityNo = city;
             }
         }
