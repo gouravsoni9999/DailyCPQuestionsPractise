@@ -1,3 +1,4 @@
+import java.util.*;
 class Solution {
     int[] parent;
     int[] key;
@@ -68,7 +69,7 @@ class Solution {
     }
 }
 
-class Solution {
+class PQSolution {
 	public int spanningTree(int V, int[][] edges) {
 	    // E means no. of edges in edges[][]
 	    // TC : O(V+E) + O(ElogE)
