@@ -98,7 +98,7 @@ class BFSSolution {
             int node = levelQ.poll();
             //neighbours of node
             for (int v = 0; v < n; v++) {
-                if (adjMatrix[u][v] == 1 && !visited[v]) {
+                if (adjMatrix[node][v] == 1 && !visited[v]) {
                     BFS(v,adjMatrix,visited);
                 }
             }
