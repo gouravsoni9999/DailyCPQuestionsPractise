@@ -1,11 +1,11 @@
-class NumArray {
+class NumArrayUsingSegmentTree {
     int[] segmentTree;
     int n;
 
     // TC : O(logn) -> for every function build(), update(), query()
     // SC : O(n + logn) -> again for every fn.
 
-    public NumArray(int[] nums) {
+    public NumArrayUsingSegmentTree(int[] nums) {
         n = nums.length;
         // build segment tree here
         segmentTree = new int[4 * n];
@@ -80,14 +80,14 @@ class NumArray {
  * int param_2 = obj.sumRange(left,right);
  */
 
-class NumArray {
+class NumArrayUsingFenwickTree {
     // using Fenwick Tree / Binary Indexed Tree (BIT)
     // it is 1-based
     int[] bit; // binary indexed tree in array representation 
     int n;
     int[] arr;
 
-    public NumArray(int[] nums) {
+    public NumArrayUsingFenwickTree(int[] nums) {
         // TC : O(nlogn)
         // SC : O(n)
         n = nums.length;
