@@ -79,3 +79,66 @@ class NumArray {
  * obj.update(index,val);
  * int param_2 = obj.sumRange(left,right);
  */
+
+class NumArray {
+    // using Fenwick Tree / Binary Indexed Tree (BIT)
+    // it is 1-based
+    int[] bit; // binary indexed tree in array representation 
+    int n;
+    int[] arr;
+
+    public NumArray(int[] nums) {
+        // TC : O(nlogn)
+        // SC : O(n)
+        n = nums.length;
+        bit = new int[n + 1];
+        arr = new int[n];
+        // build BIT
+        for (int i = 0; i < n; i++) {
+            updateQuery(i+1, nums[i]);
+            arr[i] = nums[i];
+        }
+    }
+
+    public void updateQuery(int index,int val){
+        // TC : O(log n)
+        // SC : O(1)
+        while(index <= n){
+            bit[index] += val;
+            index += (index & -index);
+        }
+    }
+
+    public void update(int index, int val) {
+        // TC : O(logn)
+        // SC : O(1)
+        int diff = val - arr[index];
+        arr[index] = val;
+        updateQuery(index+1, diff); // updates in bit array
+    }
+
+    public int query(int index) {
+        // TC : O(logn)
+        // SC : O(1)
+        int ans = 0;
+        while (index > 0) {
+            ans += bit[index];
+            index -= (index & -index);
+        }
+        return ans;
+    }
+
+    public int sumRange(int left, int right) {
+        // TC : O(logn)
+        // SC : O(1)
+        // shifted for 1-based indexing
+        return query(right+1) - query(left);
+    }
+}
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(index,val);
+ * int param_2 = obj.sumRange(left,right);
+ */
