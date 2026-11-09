@@ -1,4 +1,5 @@
-class Solution {
+import java.util.*;
+class MemoizedSolution {
     int n;
     Set<String> st;
     Boolean[] dp;
@@ -27,7 +28,7 @@ class Solution {
         return solve(0, s);
     }
 }
-class Solution {
+class Tabulatedsolution {
     int n;
     Set<String> st;
     Boolean[] dp;
