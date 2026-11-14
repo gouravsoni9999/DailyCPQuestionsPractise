@@ -32,7 +32,7 @@ class MemoizedSolution {
     }
 }
 
-class Solution {
+class TabulatedSolution {
 
     public int maxSumAfterPartitioning(int[] arr, int k) {
         // TC : O(n.k)
