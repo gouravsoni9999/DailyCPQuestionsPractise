@@ -63,7 +63,7 @@ class MemoizedSolution {
     }
 }
 
-class Solution {
+class TabulatedSolution {
 
     public int minCost(int n, int[] cuts) {
         // using tabulation
