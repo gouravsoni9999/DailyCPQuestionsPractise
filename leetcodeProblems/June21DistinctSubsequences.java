@@ -1,3 +1,4 @@
+import java.util.*;
 class Solution {
     int m;
     int n;
@@ -32,7 +33,7 @@ class Solution {
     }
 }
 
-class Solution {
+class MemoizedSolution {
     int m;
     int n;
     int[][] dp;
@@ -78,7 +79,7 @@ class Solution {
     }
 }
 
-class Solution {
+class TabulatedSolution {
     public int numDistinct(String s, String t) {
         int m = s.length();
         int n = t.length();
@@ -115,7 +116,7 @@ class Solution {
     }
 }
 
-class Solution {
+class SpaceOptimizedSolution {
     public int numDistinct(String s, String t) {
         int m = s.length();
         int n = t.length();
@@ -149,45 +150,6 @@ class Solution {
                 curr[j] = ans;
             }
             next = curr;
-        }
-        return next[0];
-    }
-}
-
-class Solution {
-    public int numDistinct(String s, String t) {
-        int m = s.length();
-        int n = t.length();
-
-        /*
-            using tabulation + space-optimization
-            TC : O(m*n)
-            SC : O(n)
-        */
-
-        int[] next = new int[n + 1];
-
-        for (int i = m; i >= 0; i--) {
-            // int[] curr = new int[n + 1];
-            for (int j = 0; j <= n; j++) {
-                int ans = 0;
-
-                if (j == n) {
-                    ans = 1;
-                } else if (i == m) {
-                    ans = 0;
-                } else if (s.charAt(i) == t.charAt(j)) {
-                    int take = next[j + 1];
-                    int notTake = next[j];
-                    ans = take + notTake;
-                } else {
-                    // not matching
-                    ans = next[j];
-                }
-
-                next[j] = ans;
-            }
-            // next = curr;
         }
         return next[0];
     }
