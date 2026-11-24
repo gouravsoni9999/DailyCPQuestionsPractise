@@ -1,4 +1,6 @@
-class Solution {
+import java.util.*;
+import java.util.Stack;
+class IterativeSolution {
     List<Integer> inOrderList = new ArrayList<>();
     Stack<TreeNode> stack = new Stack<>();
 
@@ -21,7 +23,7 @@ class Solution {
         return inOrderList;
     }
 }
-class Solution {
+class MorrisTraversalSolution {
     public List<Integer> inorderTraversal(TreeNode root) {
         // using morris traversal
         // takes O(1) constant space
